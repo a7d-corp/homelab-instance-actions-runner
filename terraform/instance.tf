@@ -17,11 +17,12 @@ resource "consul_service" "consul_service_ssh" {
   port    = 22
 
   check {
-    check_id = "${local.instance_name}:ssh"
-    name     = "SSH TCP on port 22"
-    tcp      = "${cidrhost(var.net0_network_cidr, local.ip_offset)}:22"
-    interval = "10s"
-    timeout  = "2s"
+    check_id                          = "${local.instance_name}:ssh"
+    name                              = "SSH TCP on port 22"
+    tcp                               = "${cidrhost(var.net0_network_cidr, local.ip_offset)}:22"
+    interval                          = "10s"
+    timeout                           = "5s"
+    deregister_critical_service_after = "300s"
   }
 }
 
@@ -45,8 +46,8 @@ module "instance_cloudinit_template" {
     netmask = var.net0_network_netmask
   }
 
-  search_domains = ["k8s.analbeard.com", "analbeard.com"]
-  dns_servers    = ["10.101.0.60", "10.101.0.45"]
+  search_domains = var.search_domains
+  dns_servers    = var.dns_servers
 
   user_data_blob = {
     hostname : "${local.instance_name}.${var.instance_domain}"
@@ -58,7 +59,7 @@ module "instance" {
   depends_on = [module.instance_cloudinit_template]
 
   pve_instance_name        = "${local.instance_name}.${var.instance_domain}"
-  pve_instance_description = "instance for internal infra management"
+  pve_instance_description = var.instance_description
   vmid                     = local.vmid
 
   clone      = var.clone
@@ -81,9 +82,9 @@ module "instance" {
   }]
 
   disks = [{
-    type    = "scsi"
-    storage = "local-lvm"
-    size    = "15G" # CHANGEME
+    type    = var.primary_disk_type
+    storage = var.primary_disk_location
+    size    = var.primary_disk_size
   }]
 
   snippet_dir             = local.snippet_dir
