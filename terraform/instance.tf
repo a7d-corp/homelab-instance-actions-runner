@@ -31,7 +31,7 @@ module "instance_cloudinit_template" {
 
   conn_type    = var.connection_type
   conn_user    = data.vault_generic_secret.terraform_pve_ssh.data["user"]
-  conn_ssh_key = data.vault_generic_secret.terraform_ssh_key.data["base64"]
+  conn_ssh_key = data.vault_generic_secret.terraform_pve_ssh.data["ssh-priv-key"]
   conn_target  = local.pm_host_address
 
   instance_name = "${local.instance_name}.${var.instance_domain}"
@@ -50,9 +50,9 @@ module "instance_cloudinit_template" {
   search_domains = var.search_domains
   dns_servers    = var.dns_servers
 
-  user_data_blob = {
+  user_data_blob = yamlencode({
     hostname : "${local.instance_name}.${var.instance_domain}"
-  }
+  })
 }
 
 module "instance" {
