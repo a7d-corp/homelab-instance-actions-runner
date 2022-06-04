@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket                      = "" # CHANGEME
+    bucket                      = "homelab-instance-actions-runner"
     force_path_style            = true
     key                         = "terraform.tfstate"
     skip_credentials_validation = true
