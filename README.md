@@ -1,6 +1,6 @@
-# homelab-instance-template
+# homelab-instance-actions-runner
 
-Template repo for managing an instance.
+Proxmox configuration for managing the `actions-runner` Proxmox instance. This instance providers self-hosted github actions runners.
 
 ## Managing secrets
 
@@ -17,7 +17,3 @@ Encryption:
 ```bash
 vault write transit/encrypt/tf-encryption-key -format=json plaintext=$(cat backend-config | base64 -w 0) | jq -r .data.ciphertext > backend-config.enc
 ```
-
-## Template customisation
-
-Replace all occurrences of `INSTANCE-NAME`.
